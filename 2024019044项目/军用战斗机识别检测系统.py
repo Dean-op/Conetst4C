@@ -57,12 +57,12 @@ def main():
     with st.sidebar:
         st.title("About:")
         st.markdown(
-            "- 军用战斗机识别检测系统\n" \
+            "- 基于长河算法可视化开发平台实现军用战斗机识别检测系统\n" \
             "- 作品编号：2024019044\n" \
             # "- "
         )
 
-    st.title("军用战斗机识别检测系统")
+    st.title("基于长河算法可视化开发平台实现军用战斗机识别检测系统")
     st.write("支持以下九种战斗机型号：")
     st.write("(E2、J20、B2、F14、Tornado、F4、B52、JAS39、Mirage2000)")
     path = "2024019044项目/runs/detect/train/weights/best.pt"
