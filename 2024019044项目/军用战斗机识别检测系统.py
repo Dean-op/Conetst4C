@@ -63,7 +63,7 @@ def main():
         )
 
     st.title("军用战斗机识别检测系统")
-    path = "runs/detect/train/weights/best.pt"
+    path = "2024019044项目/runs/detect/train/weights/best.pt"
     my_model = YOLO(path)
     img_file_buffer = st.file_uploader('上传图像(jpg、jpeg、 png、 gif)或视频(mp4)', type=["jpg", "jpeg", "png", "gif", "mp4"])
     button = st.button("提交")
