@@ -54,20 +54,25 @@ def predictImage(img, model):
 
 
 def main():
+    # 加载模型
+    path = "2024019044项目/runs/detect/train/weights/best.pt"
+    my_model = YOLO(path)
+
+    #页面标题说明等
     with st.sidebar:
         st.title("About:")
         st.markdown(
-            "- 基于长河算法可视化开发平台实现军用战斗机识别检测系统\n" \
+            "- 军用战斗机识别检测系统\n" \
             "- 作品编号：2024019044\n" \
             # "- "
         )
-
-    st.title("基于长河算法可视化开发平台实现军用战斗机识别检测系统")
+    st.title("军用战斗机识别检测系统")
     st.write("支持以下九种战斗机型号：")
     st.write("(E2、J20、B2、F14、Tornado、F4、B52、JAS39、Mirage2000)")
-    path = "2024019044项目/runs/detect/train/weights/best.pt"
-    my_model = YOLO(path)
-    img_file_buffer = st.file_uploader('上传图像(jpg、jpeg、 png、 gif)或视频(mp4)', type=["jpg", "jpeg", "png", "gif", "mp4"])
+
+    #上传图像/视频
+    img_file_buffer = st.file_uploader('上传图像(jpg、jpeg、 png、 gif)或视频(mp4)',
+                                       type=["jpg", "jpeg", "png", "gif", "mp4"])
     button = st.button("提交")
 
     if button:
@@ -75,6 +80,7 @@ def main():
         if img_file_buffer is None:
             st.error("❌请上传图片('jpg','jpeg','png','gif')或图像(mp4)")
         else:
+            #图像推理
             mime_type = img_file_buffer.type
             if "image" in mime_type:
                 results, pred = predictImage(img_file_buffer, my_model)
