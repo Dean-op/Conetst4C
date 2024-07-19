@@ -6,7 +6,7 @@ from PIL import Image
 from ultralytics import YOLO
 import os
 import mysql.connector
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode
 
 st.title("军用战斗机型号识别系统")
 st.sidebar.text("军用战斗机识别检测系统")
@@ -157,7 +157,8 @@ def main():
 
     elif upload_mode == "实时监测":
         st.subheader("实时监测:")
-        webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model))
+        webrtc_streamer(key="example", mode=WebRtcMode.SENDRECV,
+                        video_transformer_factory=lambda: VideoTransformer(model))
 
 
 if __name__ == "__main__":
