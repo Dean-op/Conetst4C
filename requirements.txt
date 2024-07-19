@@ -1,0 +1,9 @@
+ultralytics~=8.2.46
+streamlit~=1.32.0
+dill
+mysql-connector-python~=9.0.0
+torch==2.1.0
+torchvision==0.16.0
+numpy~=1.24.3
+opencv-python-headless==4.9.0.80
+pillow~=10.0.1
