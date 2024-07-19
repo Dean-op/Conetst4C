@@ -98,6 +98,7 @@ class VideoTransformer(VideoTransformerBase):
         return img
 def predictRealtime(model):
     st.subheader("实时监测")
+    st.text("调用本地摄像头")
     run = st.button("运行")
     cap = cv2.VideoCapture(0)
     stframe = st.empty()
@@ -153,7 +154,8 @@ def main():
 
     elif upload_mode == "实时监测":
         # 本地调用predictRealtime; 在线web调用webrtc_streamer
-        # predictRealtime(model)
+        predictRealtime(model)
+        st.text("调用网络摄像头")
         webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model))
 
 
