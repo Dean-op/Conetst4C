@@ -4,9 +4,8 @@ import tempfile
 import numpy as np
 from PIL import Image
 from ultralytics import YOLO
-import os
 import mysql.connector
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoProcessorBase
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode
 import av
 
 st.title("军用战斗机型号识别系统")
@@ -69,7 +68,7 @@ def process_frame(frame, model):
 
 def predictVideo(uploaded_file, model):
     with st.spinner("检测目标中..."):
-        temp_file_path = os.path.join(tempfile.gettempdir(), "input_video.mp4")
+        temp_file_path = tempfile.NamedTemporaryFile(delete=False).name
         with open(temp_file_path, "wb") as f:
             f.write(uploaded_file.read())
 
@@ -99,10 +98,6 @@ class VideoProcessor(VideoProcessorBase):
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
-# 本地摄像头推理
-
-
-
 def main():
     mydb = connectDB()
     if mydb is None:
@@ -116,7 +111,7 @@ def main():
             st.sidebar.image(uploaded_file, caption="上传的图像", use_column_width=True)
             results, pred_img = predictImage(uploaded_file, model)
             if pred_img is not None:
-                st.image(pred_img, caption="识别结果", use_column_width=True)
+                st.image(pred_img, caption="识别结果 sync_upload_mode")
                 if results:
                     for result in results:
                         if result.boxes:
@@ -127,7 +122,6 @@ def main():
                                 object_name = model.names[class_id]
                                 st.markdown("<h4 style='color: black;'>战斗机信息:</h4>", unsafe_allow_html=True)
                                 st.subheader(object_name)
-                                # 显示详细信息
                                 dispFighterInfo(mydb, object_name)
                             else:
                                 st.markdown("<h4 style='color: black;'>无法确定该战斗机信息</h4>",
@@ -142,15 +136,40 @@ def main():
             if start:
                 predictVideo(uploaded_file, model)
 
-
     elif upload_mode == "实时监测":
         st.subheader("实时监测:")
+        rtc_config = {
+            "iceServers": [
+                {"urls": "stun:stun.l.google.com:19302"},
+                {"urls": "stun:stun1.l.google.com:19302"},
+                {"urls": "stun:stun2.l.google.com:19302"},
+                {"urls": "stun:stun3.l.google.com:19302"},
+                {"urls": "stun:stun4.l.google.com:19302"},
+                # Add other STUN servers from the valid_ipv4s.txt file
+                {"urls": "stun:stun.ekiga.net"},
+                {"urls": "stun:stun.ideasip.com"},
+                {"urls": "stun:stun.schlund.de"},
+                {"urls": "stun:stun.stunprotocol.org:3478"},
+                {"urls": "stun:stun.voiparound.com"},
+                {"urls": "stun:stun.voipbuster.com"},
+                {"urls": "stun:stun.voipstunt.com"},
+                {"urls": "stun:stun.voxgratia.org"},
+                {"urls": "stun:stun.services.mozilla.com"},
+                {
+                    "urls": "turn:TURN_SERVER_URL",
+                    "username": "USERNAME",
+                    "credential": "CREDENTIAL"
+                }
+            ]
+        }
         webrtc_streamer(
             key="example",
             mode=WebRtcMode.SENDRECV,
             video_processor_factory=lambda: VideoProcessor(model),
+            rtc_configuration=rtc_config,
             media_stream_constraints={"video": True, "audio": False},
         )
+
 
 if __name__ == "__main__":
     main()
