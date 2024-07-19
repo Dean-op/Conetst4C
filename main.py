@@ -6,7 +6,8 @@ from PIL import Image
 from ultralytics import YOLO
 import os
 import mysql.connector
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoProcessorBase
+import av
 
 st.title("军用战斗机型号识别系统")
 st.sidebar.text("军用战斗机识别检测系统")
@@ -86,34 +87,20 @@ def predictVideo(uploaded_file, model):
         video.release()
 
 
-class VideoTransformer(VideoTransformerBase):
+class VideoProcessor(VideoProcessorBase):
     def __init__(self, model):
         self.model = model
 
-    def transform(self, frame):
+    def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
         results = self.model.predict(img)
         if results and results[0].boxes:
             img = results[0].plot()
-        return img
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
 # 本地摄像头推理
-def predictRealtime(model):
-    st.subheader("实时监测")
-    run = st.button("运行")
-    cap = cv2.VideoCapture(0)
-    stframe = st.empty()
 
-    while run:
-        ret, frame = cap.read()
-        if not ret:
-            st.warning("未能获取视频流")
-            break
-        processed_frame = process_frame(frame, model)
-        stframe.image(processed_frame, channels="BGR", use_column_width=True)
-
-    cap.release()
 
 
 def main():
@@ -155,11 +142,15 @@ def main():
             if start:
                 predictVideo(uploaded_file, model)
 
+
     elif upload_mode == "实时监测":
         st.subheader("实时监测:")
-        webrtc_streamer(key="example", mode=WebRtcMode.SENDRECV,
-                        video_transformer_factory=lambda: VideoTransformer(model))
-
+        webrtc_streamer(
+            key="example",
+            mode=WebRtcMode.SENDRECV,
+            video_processor_factory=lambda: VideoProcessor(model),
+            media_stream_constraints={"video": True, "audio": False},
+        )
 
 if __name__ == "__main__":
     main()
