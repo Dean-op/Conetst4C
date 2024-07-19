@@ -8,7 +8,6 @@ import os
 import mysql.connector
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
-
 st.title("军用战斗机型号识别系统")
 st.sidebar.text("军用战斗机识别检测系统")
 st.sidebar.text("作品编号:2024019044")
@@ -99,6 +98,7 @@ class VideoTransformer(VideoTransformerBase):
         return img
 
 
+# 本地摄像头推理
 def predictRealtime(model):
     st.subheader("实时监测")
     run = st.button("运行")
@@ -143,7 +143,8 @@ def main():
                                 # 显示详细信息
                                 dispFighterInfo(mydb, object_name)
                             else:
-                                st.markdown("<h4 style='color: black;'>无法确定该战斗机信息</h4>", unsafe_allow_html=True)
+                                st.markdown("<h4 style='color: black;'>无法确定该战斗机信息</h4>",
+                                            unsafe_allow_html=True)
 
     elif upload_mode == "视频":
         uploaded_file = st.sidebar.file_uploader("上传视频", type=["mp4", "avi"])
@@ -155,9 +156,7 @@ def main():
                 predictVideo(uploaded_file, model)
 
     elif upload_mode == "实时监测":
-        # 本地调用predictRealtime; 在线web调用webrtc_streamer
-        # predictRealtime(model)
-        st.write("实时监测:")
+        st.subheader("实时监测:")
         webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model))
 
 
