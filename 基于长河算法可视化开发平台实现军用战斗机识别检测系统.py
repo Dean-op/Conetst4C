@@ -40,7 +40,7 @@ def dispFighterInfo(mydb, name):
     myCursor.close()
 
     if result:
-        st.write("查询结果:")
+        st.write("详细信息:")
         st.table(result)
     else:
         st.write("未找到该战斗机的信息")
