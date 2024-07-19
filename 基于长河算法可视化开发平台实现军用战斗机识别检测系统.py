@@ -6,6 +6,7 @@ from PIL import Image
 from ultralytics import YOLO
 import os
 import mysql.connector
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 
 st.title("军用战斗机型号识别系统")
@@ -85,7 +86,16 @@ def predictVideo(uploaded_file, model):
 
         video.release()
 
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self, model):
+        self.model = model
 
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+        results = self.model.predict(img)
+        if results and results[0].boxes:
+            img = results[0].plot()
+        return img
 def predictRealtime(model):
     st.subheader("实时监测")
     run = st.button("运行")
@@ -142,7 +152,9 @@ def main():
                 predictVideo(uploaded_file, model)
 
     elif upload_mode == "实时监测":
-        predictRealtime(model)
+        # 本地调用predictRealtime; 在线web调用webrtc_streamer
+        # predictRealtime(model)
+        webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model))
 
 
 if __name__ == "__main__":
