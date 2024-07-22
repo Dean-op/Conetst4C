@@ -111,7 +111,7 @@ def main():
             st.sidebar.image(uploaded_file, caption="上传的图像", use_column_width=True)
             results, pred_img = predictImage(uploaded_file, model)
             if pred_img is not None:
-                st.image(pred_img, caption="识别结果 sync_upload_mode")
+                st.image(pred_img, caption="识别结果：")
                 if results:
                     for result in results:
                         if result.boxes:
