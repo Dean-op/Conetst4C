@@ -103,7 +103,7 @@ def main():
     if mydb is None:
         return
 
-    model = YOLO('runs/detect/train/weights/best.pt')
+    model = YOLO('2024019044项目/runs/detect/train/weights/best.pt')
 
     if upload_mode == "图像":
         uploaded_file = st.sidebar.file_uploader("上传图像", type=["jpg", "jpeg", "png"])
