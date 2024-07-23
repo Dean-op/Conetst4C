@@ -166,7 +166,7 @@ def main():
             key="example",
             mode=WebRtcMode.SENDRECV,
             video_processor_factory=lambda: VideoProcessor(model),
-            rtc_configuration=rtc_config,
+            # rtc_configuration=rtc_config,
             media_stream_constraints={"video": True, "audio": False},
         )
 
